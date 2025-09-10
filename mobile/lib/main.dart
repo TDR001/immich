@@ -17,7 +17,6 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
-import 'package:immich_mobile/providers/app_settings.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
 import 'package:immich_mobile/providers/db.provider.dart';
@@ -27,7 +26,6 @@ import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
 import 'package:immich_mobile/routing/router.dart';
-import 'package:immich_mobile/services/app_settings.service.dart';
 import 'package:immich_mobile/services/background.service.dart';
 import 'package:immich_mobile/services/deep_link.service.dart';
 import 'package:immich_mobile/services/local_notification.service.dart';
@@ -207,14 +205,11 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // needs to be delayed so that EasyLocalization is working
       if (Store.isBetaTimelineEnabled) {
-        ref.read(driftBackgroundUploadFgService).enableSyncService();
-        if (ref.read(appSettingsServiceProvider).getSetting(AppSettingsEnum.enableBackup)) {
-          ref.read(backgroundServiceProvider).disableService();
-          ref.read(driftBackgroundUploadFgService).enableUploadService();
-        }
+        ref.read(backgroundServiceProvider).disableService();
+        ref.read(driftBackgroundUploadFgService).enable();
       } else {
+        ref.read(driftBackgroundUploadFgService).disable();
         ref.read(backgroundServiceProvider).resumeServiceIfEnabled();
-        ref.read(driftBackgroundUploadFgService).disableUploadService();
       }
     });
 
