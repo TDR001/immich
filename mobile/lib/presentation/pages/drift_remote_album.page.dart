@@ -36,6 +36,7 @@ class _RemoteAlbumPageState extends ConsumerState<RemoteAlbumPage> with AutoRout
     _album = widget.album;
   }
 
+  // Callbacks for when this page is pushed or popped back to
   @override
   void didPush() {
     super.didPush();
@@ -48,6 +49,7 @@ class _RemoteAlbumPageState extends ConsumerState<RemoteAlbumPage> with AutoRout
     _setCurrentAlbum();
   }
 
+  // Set the current album in the provider when this page is presented
   void _setCurrentAlbum() {
     Future.microtask(() {
       if (mounted) {
