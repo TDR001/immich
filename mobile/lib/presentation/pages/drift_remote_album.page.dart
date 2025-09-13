@@ -28,12 +28,32 @@ class RemoteAlbumPage extends ConsumerStatefulWidget {
   ConsumerState<RemoteAlbumPage> createState() => _RemoteAlbumPageState();
 }
 
-class _RemoteAlbumPageState extends ConsumerState<RemoteAlbumPage> {
+class _RemoteAlbumPageState extends ConsumerState<RemoteAlbumPage> with AutoRouteAwareStateMixin<RemoteAlbumPage> {
   late RemoteAlbum _album;
   @override
   void initState() {
     super.initState();
     _album = widget.album;
+  }
+
+  @override
+  void didPush() {
+    super.didPush();
+    _setCurrentAlbum();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    _setCurrentAlbum();
+  }
+
+  void _setCurrentAlbum() {
+    Future.microtask(() {
+      if (mounted) {
+        ref.read(currentRemoteAlbumProvider.notifier).setAlbum(_album);
+      }
+    });
   }
 
   Future<void> addAssets(BuildContext context) async {

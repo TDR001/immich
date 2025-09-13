@@ -165,7 +165,6 @@ class _AssetDetailBottomSheet extends ConsumerWidget {
                 album: album,
                 isOwner: isOwner,
                 onAlbumSelected: (album) {
-                  ref.read(currentRemoteAlbumProvider.notifier).setAlbum(album);
                   context.router.push(RemoteAlbumRoute(album: album));
                 },
               );
