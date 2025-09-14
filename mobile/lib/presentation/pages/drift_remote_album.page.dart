@@ -28,34 +28,12 @@ class RemoteAlbumPage extends ConsumerStatefulWidget {
   ConsumerState<RemoteAlbumPage> createState() => _RemoteAlbumPageState();
 }
 
-class _RemoteAlbumPageState extends ConsumerState<RemoteAlbumPage> with AutoRouteAwareStateMixin<RemoteAlbumPage> {
+class _RemoteAlbumPageState extends ConsumerState<RemoteAlbumPage> {
   late RemoteAlbum _album;
   @override
   void initState() {
     super.initState();
     _album = widget.album;
-  }
-
-  // Callbacks for when this page is pushed or popped back to
-  @override
-  void didPush() {
-    super.didPush();
-    _setCurrentAlbum();
-  }
-
-  @override
-  void didPopNext() {
-    super.didPopNext();
-    _setCurrentAlbum();
-  }
-
-  // Set the current album in the provider when this page is presented
-  void _setCurrentAlbum() {
-    Future.microtask(() {
-      if (mounted) {
-        ref.read(currentRemoteAlbumProvider.notifier).setAlbum(_album);
-      }
-    });
   }
 
   Future<void> addAssets(BuildContext context) async {
@@ -243,14 +221,15 @@ class _RemoteAlbumPageState extends ConsumerState<RemoteAlbumPage> with AutoRout
   @override
   Widget build(BuildContext context) {
     return PopScope(
+      canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (didPop) {
-          Future.microtask(() {
-            if (mounted) {
-              ref.read(currentRemoteAlbumProvider.notifier).dispose();
-              ref.read(remoteAlbumProvider.notifier).refresh();
-            }
-          });
+        if (didPop || !mounted) {
+          return;
+        }
+        final hasAncestor = context.findAncestorWidgetOfExactType<RemoteAlbumPage>() != null;
+        Navigator.of(context).pop();
+        if (!hasAncestor) {
+          ref.read(currentRemoteAlbumProvider.notifier).dispose();
         }
       },
       child: ProviderScope(

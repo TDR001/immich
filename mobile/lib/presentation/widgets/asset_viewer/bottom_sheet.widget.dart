@@ -164,8 +164,13 @@ class _AssetDetailBottomSheet extends ConsumerWidget {
               return AlbumTile(
                 album: album,
                 isOwner: isOwner,
-                onAlbumSelected: (album) {
-                  context.router.push(RemoteAlbumRoute(album: album));
+                onAlbumSelected: (album) async {
+                  final prevAlbum = ref.read(currentRemoteAlbumProvider);
+                  ref.read(currentRemoteAlbumProvider.notifier).setAlbum(album);
+                  await context.router.push(RemoteAlbumRoute(album: album));
+                  if (prevAlbum != null) {
+                    ref.read(currentRemoteAlbumProvider.notifier).setAlbum(prevAlbum);
+                  }
                 },
               );
             }).toList(),
